@@ -25,7 +25,7 @@ const randomIn = (min, max) => (
 )
 
 const mixupInterval = el => {
-  const ms = randomIn(2000, 4000)
+  const ms = randomIn(3000, 20000)
   el.style.setProperty('--interval', `${ms}ms`)
 }
 
