@@ -32,10 +32,10 @@ body {
 textarea {
 	width: 75vh;
 	margin-top: 4vh;
-	margin-left: 15vh;
+	margin-left: 10vh;
 	text-align: left;
 	padding: 1rem 2rem;
-	height: 500px;
+	height: 75vh;
 	border: 0.3rem solid black;
 	border-style: double;
 	background: linear-gradient(to bottom right, rgb(255, 255, 255), rgb(199, 199, 199));
@@ -130,6 +130,7 @@ h1::before{
 	animation: flicker steps(400) var(--interval) 1s infinite;
   }
  
+
   x-sign:nth-of-type(1) {
 	font-size: 26px;
 	color: rgb(143, 143, 143);
@@ -138,6 +139,7 @@ h1::before{
 	--color3: rgb(61, 61, 61);
 	--color4: rgb(36, 36, 36);
 	font-family: Arial, Helvetica, sans-serif;
+	text-indent: 0vh;
   } 
 
   x-sign:nth-of-type(2) {
@@ -148,6 +150,7 @@ h1::before{
 	--color3: rgb(61, 61, 61);
 	--color4: rgb(36, 36, 36);
 	font-family: Arial, Helvetica, sans-serif;
+	text-indent: 0vh;
   }
 
   x-sign:nth-of-type(3) {
@@ -158,6 +161,7 @@ h1::before{
 	--color3: rgb(61, 61, 61);
 	--color4: rgb(36, 36, 36);
 	font-family: Arial, Helvetica, sans-serif;
+	text-indent: 10vh;
   }
 
   x-sign:nth-of-type(4) {
@@ -168,6 +172,9 @@ h1::before{
 	--color3: rgb(61, 61, 61);
 	--color4: rgb(36, 36, 36);
 	font-family: Arial, Helvetica, sans-serif;
+	text-indent: 0vh;
+	text-align: right;
+	
   }
 
   
@@ -179,11 +186,11 @@ h1::before{
   }
 	.sekcia2 {
 		width: 75vh;
-		height: 500px;
+		height: 75vh;
 		background-color: rgb(221, 221, 221);
 		display: inline-block;
 		margin-top: 4vh;
-		margin-left: 20vh;
+		margin-left: 15vh;
 		border: 0.3rem solid black;
 		border-style: double;
 	}
