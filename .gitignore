@@ -1,0 +1,4 @@
+#IGNORED FOLDERS
+__pycache__/
+.git/
+venv/
