@@ -16,7 +16,7 @@ The latest version can be accessed using the following link:
 
 
 
-**Latest version of the project **
+**Latest version of the project**
 ![Second](https://i.imgur.com/qo7CQhU.png)
 
 **Wordpress website**
