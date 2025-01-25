@@ -3,23 +3,26 @@ Vector Script (VES) defines a vector graphics format which preserves elementary 
 ## General
 The team project was created as a final high school assignment that utilizes both frontend and backend. It was the first larger project I have worked on. Drawing functions were coded in Python, frontend part used HTML, CSS and some elements from JavaScript. The first version of the project was using Python only. It was able to read from **.ves** files and it drew the objects immediately. The Second version was run with FLASK Python Web Server. Final version used web hosting `render.com`. The Last part of the project was WordPress page. We used it for the presentation and it was uploaded on hosting `endora.cz`. The wordpress site remains lost due to being discontinued for inactivity.
 
-The final version is still uploaded:   
+The latest version can be accessed using the following link: 
 `https://vesprojekt-nvgj.onrender.com/`
 
 
 
+## Preview
 
-
-
+**Early version of the project without GUI**
 ![First](https://i.imgur.com/Er48o4I.png)
-**The First version of the project**
 
 
 
 
+**Latest version of the project **
 ![Second](https://i.imgur.com/qo7CQhU.png)
-**Latest version of the project**
 
+**Wordpress website**
+![Second](https://i.imgur.com/zgQsD5J.png)
+
+**The code used in examples**
 ```VES v2.2 602 402
 CLEAR #6f706c
 FILL_TRIANGLE 65 220 100 300 50 300 #FFFFFF
@@ -61,7 +64,7 @@ CIRCLE 300 150 16 2 #FFFFFF
 
 TRIANGLE 300 150 150 50 450 50 1 #FFFFFF
 ```
-**This code is responsible for image render**
+
 ## Credits
 ### Adam Babiar
 ### Boris Pekarčík
