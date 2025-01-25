@@ -1,24 +1,72 @@
+#DEMO CODE MADE IN DECEMBER 2022
+#CONVERT
+def convert_x(WIDTH, output_width, x):
+  return int(x/WIDTH * output_width)
+
+def convert_y(HEIGHT, output_height, y):
+  return int(y/HEIGHT * output_height)
+
+def convert_point(WIDTH, HEIGHT, output_width, output_height, X):
+  return (convert_x(WIDTH, output_width, X[0]), convert_y(HEIGHT, output_height, X[1]))
+
+
+#####HEAD#####
 from PIL import Image
-from random import randint
+from PIL import ImageColor
+with open('projekt.ves', 'r+') as f:
+  lines = []
+  for line in f:
+    lines.append(line)
+head = lines[0]
+head = head.split(" ")
+#head = f.readline().split(" ")
+if len(head) != 4:
+  print("Error, wrong input")
+verzia = head[1]
+WIDTH = head[2]
+HEIGHT = head[3]
+x = input("Zadaj sirku obrazku. Ak chces zanechat povodne rozlisenie suboru stlac ENTER: ")
+if x == "":
+  output_width = WIDTH
+  output_height = HEIGHT
+else:
+  output_width = round(float(x))
+  output_height = int(int(HEIGHT)/int(WIDTH) * output_width)
 
+#COLOR FOR OBJECTS
+def hextorgb(clr):
+  rgb = ImageColor.getcolor(clr,"RGB")
+  return(rgb)
 
-def random_color():
-  r = randint(0, 255)
-  g = randint(0, 255)
-  b = randint(0, 255)
+#CLEAR
+for clr_line in lines:
+  clr_line = clr_line.split(" ")     
+  if clr_line[0] == "CLEAR":
+      color = hextorgb(clr_line[1])
+
+#COLOR FOR LINES
+def hex2dec(cislo):
+  vysledok = 0
+  for index in range(len(cislo)):
+    cifra = cislo[(index+1)*(-1)].upper()   
+    if ord("A") <= ord(cifra) <= ord("F"):
+      cifra = ord(cifra) - 65 + 10
+    else:
+      cifra = int(cifra)
+    vysledok += cifra*16**index
+  return vysledok
+
+def LineColor(color):
+  r = hex2dec(color[1:3])
+  g = hex2dec(color[3:5])
+  b = hex2dec(color[5:7])
   return (r, g, b)
 
-def render_ves():
-  width = 640
-  height = 400
-  img = Image.new('RGB', (width, height), (255,255,255))
-  farba = random_color()
-  for x in range(200, 401):
-    for y in range(100, 201):
-      img.putpixel((x, y), farba)
-  return img
+print(verzia,output_width,output_height)
+img = Image.new('RGB', (int(output_width), int(output_height)), color)
 
-#1.LINEPIXELS-------------------------------------------------------------------------------
+#############################
+
 def linePixels(A, B):
   pixels = []
   if A[0] == B[0]:
@@ -46,24 +94,6 @@ def linePixels(A, B):
         pixels.append((x, y))
   return pixels
 
-#2.THICKLINE
-def thick_line(im, A, B, thickness, color):
-  pixels = linePixels(A, B)
-  for X in pixels:
-    FILL_CIRCLE(im, X, thickness/2, color)
-
-#3.GET Y
-def getY(point):
-  return point[1]
-
-#4.HEX TO RGB
-def hex_to_rgb(hex):
-  rgb = []
-  for i in (0,2,4):                                          
-    decimal = int(hex[i:i+2], 16)                
-  return tuple(rgb)
-
-#5.LINE
 def line(im, A, B, color):
   if A[0] == B[0]:
     if A[1] > B[1]:
@@ -89,63 +119,49 @@ def line(im, A, B, color):
         y = int((B[1] - A[1])/(B[0] - A[0]) * (x - A[0]) + A[1])
         im.putpixel((x, y), color)
 
-#6.LINE2
-def LINE(im, A, B, thickness, color):
-  farba = hex_to_rgb(color)
+#############################
+
+def circle(im, S, r, thickness, color):
+  thickness -= 1
+  for x in range(0, int(r/2**(1/2)) + 1):
+    y = int((r**2 - x**2)**(1/2))
+    line(im, (x + S[0] - thickness, y + S[1] - thickness),(x + S[0], y + S[1]), color)
+    line(im, (y + S[0] - thickness, x + S[1] - thickness), (y + S[0], x + S[1]), color)
+    line(im, (y + S[0] - thickness, -x + S[1] + thickness),(y + S[0], -x + S[1]), color)
+    line(im, (x + S[0] - thickness, -y + S[1] + thickness), (x + S[0], -y + S[1]), color)
+    line(im, (-x + S[0] + thickness, -y + S[1] + thickness), (-x + S[0], -y + S[1]), color)
+    line(im, (-y + S[0] + thickness, -x + S[1] + thickness), (-y + S[0], -x + S[1]), color)
+    line(im, (-y + S[0] + thickness, x + S[1] - thickness), (-y + S[0], x + S[1]), color)
+    line(im, (-x + S[0] + thickness, y + S[1] - thickness), (-x + S[0], y + S[1]), color)
+
+def fill_circle(im, S, r, color):
+  for x in range(0, int(r/2**(1/2)) + 1):
+    y = int((r**2 - x**2)**(1/2))
+    if 0 < x + int(S[0]) < int(WIDTH) and 0 < int(y) + int(S[1]) < int(HEIGHT):
+      line(im, (x + S[0], y + S[1]), (x + S[0], -y + S[1]), color)
+      line(im, (y + S[0], x + S[1]), (y + S[0], -x + S[1]), color)
+      line(im, (-x + S[0], -y + S[1]), (-x + S[0], y + S[1]), color)
+      line(im, (-y + S[0], x + S[1]), (-y + S[0], -x + S[1]), color)
+
+def getY(point):
+  return point[1]
+
+#############################
+
+def thick_line(im, A, B, thickness, color):
   pixels = linePixels(A, B)
   for X in pixels:
-    FILL_CIRCLE(im, X, thickness/2, farba)
+    fill_circle(im, X, thickness/2, color)
 
-#7.RECTANGLE
-def RECT(im, ax, ay, width, height, thickness, color):
-  farba = hex_to_rgb(color)
-  LINE(obr, (ax,ay), (ax+width,ay), thickness, color) 
-  LINE(obr, (ax+width,ay), (ax+width,ay+height), thickness, color)
-  LINE(obr, (ax+width,ay+height), (ax,ay+height), thickness, color)
-  LINE(obr, (ax,ay+height), (ax,ay), thickness, color)
+def triangle(im, A, B, C, thickness, color):
+  thick_line(im, A, B, thickness, color)
+  thick_line(im, A, C, thickness, color)
+  thick_line(im, C, B, thickness, color)
 
-#8.TRIANGLE
-def TRIANGLE(im, ax, ay, bx, by, cx, cy, thickness, color):
-  farba = hex_to_rgb(color)
-  thick_line(obr, (ax, ay), (bx, by), thickness, farba)
-  thick_line(obr, (ax, ay), (cx, cy), thickness, farba)
-  thick_line(obr, (bx, by), (cx, cy), thickness, farba)
-
-#9.CIRCLE
-def CIRCLE(im, S, r, thickness, color):
-  farba = hex_to_rgb(color)
-  for x in range(0, int(r/2**(1/2)) + 1):
-    y = int((r**2 - x**2)**(1/2))
-
-    FILL_CIRCLE(obr , (x + S[0], y + S[1]), thickness/2, farba)
-    FILL_CIRCLE(obr, (y + S[0], x + S[1]), thickness/2, farba)
-    FILL_CIRCLE(obr, (y + S[0], -x + S[1]), thickness/2, farba)
-    FILL_CIRCLE(obr, (x + S[0], -y + S[1]), thickness/2, farba)
-    FILL_CIRCLE(obr, (-x + S[0], -y + S[1]), thickness/2, farba)
-    FILL_CIRCLE(obr, (-y + S[0], -x + S[1]), thickness/2, farba)
-    FILL_CIRCLE(obr, (-y + S[0], x + S[1]), thickness/2, farba)
-    FILL_CIRCLE(obr, (-x + S[0], y + S[1]), thickness/2, farba)
-
-#10.FILL CIRCLE
-def FILL_CIRCLE(im, S, r, color):
-  for x in range(0, int(r/2**(1/2)) + 1):
-    y = int((r**2 - x**2)**(1/2))
-
-    line(im, (x + S[0], y + S[1]), (x + S[0], -y + S[1]), color)
-    line(im, (y + S[0], x + S[1]), (y + S[0], -x + S[1]), color)
-    line(im, (-x + S[0], -y + S[1]), (-x + S[0], y + S[1]), color)
-    line(im, (-y + S[0], -x + S[1]), (-y + S[0], x + S[1]), color)
-
-#11.FILL TRIANGLE
-def FILL_TRIANGLE(obr, ax, ay, bx, by, cx, cy, color):
-  farba = hex_to_rgb(color) 
-  A = (ax, ay)
-  B = (bx, by)
-  C = (cx, cy)
+def fill_triangle(im, A, B, C, color):
   V = sorted([A, B, C], key=getY)
   left = linePixels(V[0], V[1]) + linePixels(V[1], V[2])
   right = linePixels(V[0], V[2])
-    
   Xmax = max(A[0], B[0], C[0])
   Xmin = min(A[0], B[0], C[0])
   if V[1][0] == Xmax:
@@ -164,24 +180,61 @@ def FILL_TRIANGLE(obr, ax, ay, bx, by, cx, cy, color):
     
     if x2 < 0:
       continue
-    if x2 > obr.width:
-      x2 = obr.width - 1
+    if x2 > im.width:
+      x2 = im.width - 1
     if x1 < 0:
       x1 = 0
+    line(im, (x1, y), (x2, y), color)
 
-    line(obr, (x1, y), (x2, y), farba)
+def rect(im, A, width, height, thickness, color):
+  thick_line(im, A, (A[0]+ width, A[1]), thickness, color)
+  thick_line(im, (A[0]+ width, A[1]), (A[0]+ width, A[1] + height), thickness, color)
+  thick_line(im, A, (A[0], A[1] + height), thickness, color)
+  thick_line(im, (A[0], A[1] + height), (A[0] + width, A[1] + height), thickness, color)
 
-#12.FILL RECT
-def FILL_RECT(im, ax, ay, width, height, fillcolor):
-  fill_color = hex_to_rgb(fillcolor)
-  for x in range(ax, ax+width+1):
-    for y in range(ay, ay+height+1):
-      obr.putpixel((x, y), fill_color)
+def fill_rect(im, A, width, height, color):
+  for x in range(A[0], A[0] + width):
+    for y in range(A[1], A[1] + height):
+      im.putpixel((x, y), color)
 
-#13. CLEAR
-def CLEAR(color):
-  farba = hex_to_rgb(color)
-  for x in range(0, output_width):                             
-    for y in range(0, output_height):
-      obr.putpixel((x, y), farba)
-  return obr
+#############################
+
+counter = 0      
+for rline in lines:
+  counter += 1
+  rline = rline.split(" ")
+  
+  try:
+    if rline[0] == "VES" or rline[0] == "CLEAR":
+      pass 
+    elif rline[0] == "LINE":
+      line_color = LineColor(rline[5])
+      thick_line(img, (round(float(rline[1])), round(float(rline[2]))), (round(float(rline[3])), round(float(rline[4]))), round(float(rline[5])), line_color)
+    elif rline[0] == "CIRCLE":
+      circle_color = hextorgb(rline[5])
+      circle(img, (round(float(rline[1])), round(float(rline[2]))), round(float(rline[3])), round(float(rline[4])), circle_color)
+    elif rline[0] == "FILL_CIRCLE":
+      fill_circle_color = hextorgb(rline[4])
+      fill_circle(img, (round(float(rline[1])), round(float(rline[2]))), round(float(rline[3])), fill_circle_color)
+    elif rline[0] == "FILL_TRIANGLE":
+      fill_triangle_color = hextorgb(rline[7])
+      fill_triangle(img, (round(float(rline[1])), round(float(rline[2]))), (round(float(rline[3])), round(float(rline[4]))), (round(float(rline[5])), round(float(rline[6]))), fill_triangle_color)
+    elif rline[0] == "TRIANGLE":
+      triangle_color = hextorgb(rline[8])
+      triangle(img, (round(float(rline[1])), round(float(rline[2]))), (round(float(rline[3])), round(float(rline[4]))), (round(float(rline[5])), round(float(rline[6]))),round(float(rline[7])) ,triangle_color)
+    elif rline[0] == "FILL_RECT":
+      fill_rect_color = hextorgb(rline[5])
+      fill_rect(img, (round(float(rline[1])), round(float(rline[2]))), round(float(rline[3])), round(float(rline[4])), fill_rect_color)
+    elif rline[0] == "RECT":
+      rect_color = hextorgb(rline[6])
+      rect(img, (round(float(rline[1])), round(float(rline[2]))), round(float(rline[3])), round(float(rline[4])), round(float(rline[5])), rect_color)
+    elif len(rline[0:]) >= 0 and len(rline[0:]) <= 1:
+      print(f"Line {counter} is empty")
+    #elif len(rline[-1]) >= 0 and len(rline[-1]) <= 1:
+      #print(f"Line {counter} ignored")
+    else:
+      print(f"Syntax error on line {counter}: Unknown command {rline[0]}")
+  except:
+    print(f"Syntax error on line {counter}")
+
+img
